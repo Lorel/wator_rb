@@ -4,7 +4,8 @@ class Environment
 	attr_accessor :grid, :tunas, :sharks
 
 	def initialize
-		@size = DIMENSION
+		@size = Settings.params[:dimensions]
+		@inhabitants = Settings.params[:inhabitants]
 		@grid = Array.new(@size) { Array.new(@size ) }
 		@size.times do |x|
 			@size.times do |y|
@@ -16,7 +17,7 @@ class Environment
 
 		squares = @grid.clone.flatten
 
-		INHABITANTS.times {
+		@inhabitants.times {
 			tuna, shark = Tuna.new(self), Shark.new(self)
 			@tunas << tuna
 			@sharks << shark
@@ -60,7 +61,7 @@ class Environment
 		attr_accessor :x,:y,:content
 
 		def initialize(x,y)
-			@size = DIMENSION
+			@size = Settings.params[:dimensions]
 			raise SquareOutOfRangeException.new unless ((0..(@size-1)).include?(x) || (0..(@size-1)).include?(y))
 			@x, @y = x, y
 		end

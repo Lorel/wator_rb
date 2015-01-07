@@ -1,19 +1,15 @@
 load "environment.rb"
 load "agent.rb"
-
-ITERATIONS = 10
-DIMENSION = 50
-INHABITANTS = 50
-GESTATION = 3
-STARVING = 3
+load "settings.rb"
 
 class Core
 	def initialize
+		Settings.load!("config.yml")
+		@iterations = Settings.params[:iterations]
 		@environment = Environment.new
 	end
-
 	def run
-		ITERATIONS.times {
+		@iterations.times {
 			@environment.turn
 			@environment.display
 		}

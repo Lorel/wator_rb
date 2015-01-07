@@ -3,8 +3,8 @@ class Agent
 	attr_accessor :square
 
 	def initialize(environment, square = nil)
-		@gestation_time = GESTATION
-		@gestation = 0
+		@breeding_time = Settings.params[:breeding]
+		@breeding = 0
 		@environment= environment
 		@square = square
 		@square.content = self if square
@@ -17,9 +17,9 @@ class Agent
 	end
 
 	def give_birth
-		@gestation += 1
-		if @gestation > @gestation_time && @old_square
-			@gestation = 0
+		@breeding += 1
+		if @breeding > @breeding_time && @old_square
+			@breeding = 0
 			new_agent = self.class.new(@environment,@old_square)
 			collection << new_agent
 			return new_agent
@@ -44,7 +44,8 @@ end
 class Shark < Agent
 	def initialize(environment, square = nil)
 		super(environment, square)
-		@starving_time = STARVING
+		@breeding_time = Settings.params[:shark_breeding] if defined? Settings.params[:shark_breeding]
+		@starving_time = Settings.params[:starving]
 		@starving = 0
 	end
 
@@ -67,5 +68,6 @@ end
 class Tuna < Agent
 	def initialize(environment, square = nil)
 		super(environment, square)
+		@breeding_time = Settings.params[:tuna_breeding] if defined? Settings.params[:tuna_breeding]
 	end
 end

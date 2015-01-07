@@ -1,0 +1,6 @@
+params:
+  iterations: 10
+  dimensions: 50
+  inhabitants: 50
+  breeding: 3
+  starving: 3
