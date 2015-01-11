@@ -1,4 +1,5 @@
 require 'pp'
+require 'colorize'
 
 class Environment
 	attr_accessor :grid, :tunas, :sharks
@@ -6,7 +7,7 @@ class Environment
 	def initialize
 		@size = Settings.params[:dimensions]
 		@inhabitants = Settings.params[:inhabitants]
-		@grid = Array.new(@size) { Array.new(@size ) }
+		@grid = Array.new(@size) { Array.new(@size) }
 		@size.times do |x|
 			@size.times do |y|
 				@grid[x][y] = Square.new(x,y)
@@ -17,25 +18,40 @@ class Environment
 
 		squares = @grid.clone.flatten
 
-		@inhabitants.times {
-			tuna, shark = Tuna.new(self), Shark.new(self)
+		(Settings.params[:tuna_inhabitants] || @inhabitants).times {
+			tuna = Tuna.new(self)
 			@tunas << tuna
-			@sharks << shark
 			square = squares.delete(squares.sample)
 			square.content = tuna
 			tuna.square = square
+		}
+
+		(Settings.params[:shark_inhabitants] || @inhabitants).times {
+			shark = Shark.new(self)
+			@sharks << shark
 			square = squares.delete(squares.sample)
 			square.content = shark
 			shark.square = square
 		}
 	end
 
+	def to_json(options = {})
+		{
+			grid: 	@grid,
+			tunas: 	@tunas,
+			sharks: @sharks
+		}.to_json
+	end
+
 	def turn
-		@tunas.concat(@sharks).shuffle.each{ |a| a.turn }
+		[@tunas,@sharks].flatten.shuffle.each{ |a| a.turn }
 	end
 
 	def display
 		puts @grid.inject(""){ |res,line| res + line.inject(""){ |res,square| res + square.char + " " } + "\n" } + "__" * @size + "\n"
+		puts "Nombre de requins : #{@sharks.count}"
+		puts "Nombre de thons : #{@tunas.count}"
+		puts "Nombre de poissons : #{@grid.flatten.reject{|s| s.content.nil?}.count}"
 	end
 
 	def squares_around square
@@ -66,10 +82,18 @@ class Environment
 			@x, @y = x, y
 		end
 
+		def to_json(options = {})
+			{
+				content: 	@content.to_s,
+				x: 				@x,
+				y:  			@y
+			}.to_json
+		end
+
 		def char
 			case @content
-				when Shark then "S"
-				when Tuna then "T"
+				when Shark then "S".red
+				when Tuna then "T".blue
 				else "-"
 			end
 		end

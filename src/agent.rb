@@ -7,22 +7,29 @@ class Agent
 		@breeding = 0
 		@environment= environment
 		@square = square
-		@square.content = self if square
+		@square.content = self if square # set square content with new fish if square provided
+	end
+
+	def to_json(options = {})
+		{
+			type: self.class.to_s.downcase
+		}.to_json
 	end
 
 	def move
 		@old_square = @square
 		@square = @environment.empty_squares_around(@square).sample || @old_square
-		@old_square = nil if @old_square == @square
+		@old_square = nil if @old_square == @square # no old_square if fish does not move
+		@old_square.content = nil if @old_square # reset old_square content if @old_square exists (fish has moved)
+		@square.content = self if @old_square # update square content if @old_square exists (fish has moved)
 	end
 
 	def give_birth
 		@breeding += 1
-		if @breeding > @breeding_time && @old_square
+		if @breeding > @breeding_time && @old_square # breeding time reached and old square not nil (so exists)
 			@breeding = 0
 			new_agent = self.class.new(@environment,@old_square)
 			collection << new_agent
-			return new_agent
 		end 
 	end
 
@@ -44,7 +51,7 @@ end
 class Shark < Agent
 	def initialize(environment, square = nil)
 		super(environment, square)
-		@breeding_time = Settings.params[:shark_breeding] if defined? Settings.params[:shark_breeding]
+		@breeding_time = Settings.params[:shark_breeding]
 		@starving_time = Settings.params[:starving]
 		@starving = 0
 	end
@@ -66,8 +73,20 @@ end
 
 
 class Tuna < Agent
+	attr_accessor :alive
+
 	def initialize(environment, square = nil)
 		super(environment, square)
-		@breeding_time = Settings.params[:tuna_breeding] if defined? Settings.params[:tuna_breeding]
+		@breeding_time = Settings.params[:tuna_breeding]
+		@alive = true
+	end
+
+	def turn
+		super if @alive
+	end
+
+	def die
+		@alive = false
+		super
 	end
 end

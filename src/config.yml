@@ -1,6 +1,10 @@
 params:
-  iterations: 10
+  iterations: 200
   dimensions: 50
   inhabitants: 50
+  tuna_inhabitants: 100
+  shark_inhabitants: 50
   breeding: 3
-  starving: 3
+  tuna_breeding: 3
+  shark_breeding: 10
+  starving: 4
