@@ -1,0 +1,69 @@
+doctype html
+html
+  head
+    title Wator : Tunas VS Sharks
+    meta name="keywords" content="template language"
+    meta name="author" content="havet/douillyez"
+    link rel="icon" type="image/png" href="favicon.png"
+    link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"
+		script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"
+		css:
+			#content {
+				width: 1200px;
+				margin: auto;
+			}
+			#see {
+				border-collapse: collapse;
+				padding: 50px;
+				border: 1px solid lightblue;
+			}
+			#see td {
+				margin: 1px;
+				width: 8px;
+				height: 8px;
+			}
+			.tuna{ background-color: blue; }
+			.shark{ background-color: red; }
+
+  body
+    h1 Wator : Tunas VS Sharks
+
+    #content
+      p This example shows you how a basic Slim file looks.
+
+      table#see
+
+
+
+
+    javascript:
+    	$(document).ready(function(){
+
+    		$.ajax({
+    			url: "init/100/50/50/3/10/4",
+    			context: $( "#see" )
+    		}).done(function(data) {
+    			var $table = $( this );
+    			$( this ).addClass( "done" );
+    			console.log(data);
+    			$.each( data.grid, function( index, line ) {
+    				var $tr = $( '<tr>' );
+    				console.log(line.length);
+
+    				$.each( line, function( index, square ) {
+    					var $td = $( '<td>' );
+    					console.log(square.content );
+
+    					if ( square.content != null ) {
+    						$td.addClass( square.content.type );
+    					}
+    					$tr.append( $td );
+    				});
+
+    				$table.append( $tr );
+    			});
+    			console.log($table);
+    		}).fail(function( error ) {
+    			console.log(error);
+    		});
+    	});

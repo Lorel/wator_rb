@@ -8,11 +8,13 @@ class Agent
 		@environment= environment
 		@square = square
 		@square.content = self if square # set square content with new fish if square provided
+		@age = 0
 	end
 
 	def to_json(options = {})
 		{
-			type: self.class.to_s.downcase
+			type: self.class.to_s.downcase,
+			age: 	@age
 		}.to_json
 	end
 
@@ -36,6 +38,7 @@ class Agent
 	def turn
 		move
 		give_birth
+		@age += 1
 	end
 
 	def die

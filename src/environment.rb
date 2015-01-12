@@ -84,7 +84,7 @@ class Environment
 
 		def to_json(options = {})
 			{
-				content: 	@content.to_s,
+				content: 	@content,
 				x: 				@x,
 				y:  			@y
 			}.to_json
