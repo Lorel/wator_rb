@@ -11,10 +11,12 @@ html
         script src="http://code.highcharts.com/modules/exporting.js"
         script src="lib/Chart.js/Chart.js"
         css:
+            h1{
+                padding: 20px 0;            
+            }
             #content {
                 width: 1400px;
                 margin: auto;
-                padding: 50px;
             }
             #see {
                 border-collapse: collapse;
@@ -39,9 +41,9 @@ html
             }
 
     body
-        h1 Wator : Tunas VS Sharks
-
         #content
+            h1 Wator : Tunas VS Sharks
+
             table#see
 
             #infos
@@ -269,6 +271,7 @@ html
                 $( this ).addClass( "done" );
 
                 // datas process
+                window.iterations = data.iteration;
                 $iterations.text( window.iterations );
                 $tunas.text( data.tunas.length );
                 $sharks.text( data.sharks.length );
@@ -318,7 +321,6 @@ html
 
         function turn() {
             if ( window.running ) {
-                window.iterations++;
                 call( "turn" );
                 setTimeout( turn, window.delay );
             }

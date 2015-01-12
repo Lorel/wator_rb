@@ -5,6 +5,7 @@ class Environment
 	attr_accessor :grid, :tunas, :sharks
 
 	def initialize
+		@iteration = 0
 		@size = Settings.params[:dimensions]
 		@inhabitants = Settings.params[:inhabitants]
 		@grid = Array.new(@size) { Array.new(@size) }
@@ -41,11 +42,13 @@ class Environment
 			tunas: 	@tunas,
 			sharks: @sharks,
 			tunas_census: tunas_census,
-			sharks_census: sharks_census
+			sharks_census: sharks_census,
+			iteration: @iteration
 		}.to_json
 	end
 
 	def turn
+		@iteration += 1
 		[@tunas,@sharks].flatten.shuffle.each{ |a| a.turn }
 	end
 
