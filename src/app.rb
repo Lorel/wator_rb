@@ -20,14 +20,16 @@ class App < Sinatra::Base
 			shark_breeding: 		params[:shark_breeding].to_i,
 			starving: 					params[:starving]
 		}
-		content_type :json
-		c = Core.new options
-		e = c.environment
-		e.to_json
+		@c = Core.new options
+    content_type :json
+		@c.environment.to_json
 	end
 
 	get '/turn' do
-
+    @c ||= Core.new
+    @c.environment.turn
+    content_type :json
+    @c.environment.to_json
 	end
 
 	get '/param/:id' do

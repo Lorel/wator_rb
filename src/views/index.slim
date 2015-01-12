@@ -38,32 +38,53 @@ html
 
     javascript:
     	$(document).ready(function(){
-
-    		$.ajax({
-    			url: "init/100/50/50/3/10/4",
-    			context: $( "#see" )
-    		}).done(function(data) {
-    			var $table = $( this );
-    			$( this ).addClass( "done" );
-    			console.log(data);
-    			$.each( data.grid, function( index, line ) {
-    				var $tr = $( '<tr>' );
-    				console.log(line.length);
-
-    				$.each( line, function( index, square ) {
-    					var $td = $( '<td>' );
-    					console.log(square.content );
-
-    					if ( square.content != null ) {
-    						$td.addClass( square.content.type );
-    					}
-    					$tr.append( $td );
-    				});
-
-    				$table.append( $tr );
-    			});
-    			console.log($table);
-    		}).fail(function( error ) {
-    			console.log(error);
-    		});
+            init();
+            for (var i=0; i<10; i++) {
+                setTimeout(turn, 100);
+            }    		
     	});
+
+        function call( url ) {
+            console.log('CALL');
+            $.ajax({
+                url: url,
+                context: $( "#see" )
+            }).done(function(data) {
+                var $table = $( this );
+
+                $( this ).addClass( "done" );
+                console.log(data);
+
+                $table.empty();
+                console.log($table  );
+                $.each( data.grid, function( index, line ) {
+                    var $tr = $( '<tr>' );
+                    console.log(line.length);
+
+                    $.each( line, function( index, square ) {
+                        var $td = $( '<td>' );
+                        console.log(square.content );
+
+                        if ( square.content != null ) {
+                            $td.addClass( square.content.type );
+                        }
+                        $tr.append( $td );
+                    });
+
+                    $table.append( $tr );
+                });
+                console.log($table);
+            }).fail(function( error ) {
+                console.log(error);
+            });
+        }
+
+        function init() {
+            console.log('INIT');
+            call( "init/100/50/50/3/10/4" );
+        }
+
+        function turn() {
+            console.log('TURN');
+            call( "turn" );
+        }
