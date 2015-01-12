@@ -14,7 +14,9 @@ html
             #content {
                 width: 1400px;
                 margin: auto;
-                padding: 50px;
+            }
+            #init {
+                padding: 30px 0;
             }
             #see {
                 border-collapse: collapse;
@@ -41,7 +43,21 @@ html
     body
         h1 Wator : Tunas VS Sharks
 
+
+
         #content
+
+            form#init.form-inline
+                .form-group
+                    input.form-control name="size" placeholder="Taille"
+                    input.form-control name="tuna_inhabitants" placeholder="Thons"
+                    input.form-control name="shark_inhabitants" placeholder="Requins"
+                    input.form-control name="tuna_breeding" placeholder="Gestation thons"
+                    input.form-control name="shark_breeding" placeholder="Gestation requins"
+                    input.form-control name="starving" placeholder="Famine requins"
+                    button.btn name="run"
+                        'Run !
+
             table#see
 
             #infos
@@ -149,7 +165,7 @@ html
 
         };
 
-        var popChart = new Chart(popCtx).Line(popDatas,popChartOptions);
+        var popChart;
 
         function addDatasToPopChart( data ) {
             window.popChart.addData( [ data.tunas.length, data.sharks.length ], window.iterations );
@@ -173,7 +189,7 @@ html
             ]
         };
 
-        var popRateChart = new Chart(popRateCtx).Line(popRateDatas,$.merge({scaleOverride: true,scaleSteps: 10,scaleStepWidth: 10},popChartOptions)); // use same options as pop chart
+        var popRateChart;
 
         function addDatasToPopRateChart( data ) {
             window.popRateChart.addData( [ data.tunas.length / data.sharks.length ], window.iterations );
@@ -240,13 +256,31 @@ html
           //  popRateChart = new Chart(popRateCtx).PolarArea(data)
           //  popAgeChart = new Chart(popAgeCtx).PolarArea(data)
 
-    	$(document).ready(function(){
-            init();
-            run(); 		
-    	});
+        var sizeWator,
+            thunas,
+            sharks,
+            thuna_breeding,
+            shark_breeding,
+            starving;
+
+        $( "#init" ).on( 'click', 'button[name="run"]', function(e){
+            e.preventDefault(); e.stopPropagation();
+
+            if ( $('input[name="size"]').val() ) { window.sizeWator = $('input[name="size"]').val() } else { window.sizeWator = 50 }
+            if ( $('input[name="thunas"]').val() ) { window.thunas = $('input[name="thunas"]').val() } else { window.thunas = 100 }
+            if ( $('input[name="sharks"]').val() ) { window.sharks = $('input[name="sharks"]').val() } else { window.sharks = 100 }
+            if ( $('input[name="thuna_breeding"]').val() ) { window.thuna_breeding = $('input[name="thuna_breeding"]').val() } else { window.thuna_breeding = 3 }
+            if ( $('input[name="shark_breeding"]').val() ) { window.shark_breeding = $('input[name="shark_breeding"]').val() } else { window.shark_breeding = 7 }
+            if ( $('input[name="starving"]').val() ) { window.starving = $('input[name="starving"]').val() } else { window.starving = 5 }
+
+            window.init();
+            window.running = confirm("L'expérience a été initialisée, appuyez sur OK pour démarrer\n(à tout moment, vous pouvez arrêter et redémarrer l'expérience en appuyant sur la touche 'S')");
+            window.run();
+        });
 
         $(document).on('keypress', function(event) {
             if ( event.which == 115 ) {
+                window.running ? alert('Arrêt') : alert('Redémarrage');
                 window.running = !window.running;
                 if ( window.running ) {
                     window.run();
@@ -312,8 +346,12 @@ html
         }
 
         function init() {
+            $('#pop').empty();
+            $('#pop-rate').empty();
+            window.popChart = new Chart(window.popCtx).Line(window.popDatas,$.merge({scaleStepWidth: (window.sizeWator * window.sizeWator / 10)},window.popChartOptions));
+            window.popRateChart = new Chart(window.popRateCtx).Line(window.popRateDatas,$.merge({scaleOverride: true,scaleSteps: 10,scaleStepWidth: 10},window.popChartOptions)); // use same options as pop chart
             // /init/:size/:tuna_inhabitants/:shark_inhabitants/:tuna_breeding/:shark_breeding/:starving
-            call( "init/50/100/100/3/7/4" );
+            call( "init/" + window.sizeWator + "/" + window.thunas + "/" + window.sharks + "/" + window.thuna_breeding + "/" + window.shark_breeding + "/" + window.starving );
         }
 
         function turn() {
