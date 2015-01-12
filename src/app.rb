@@ -6,6 +6,8 @@ require 'slim'
 load "core.rb"
 
 class App < Sinatra::Base
+	use Rack::Session::Pool
+	set :public_folder, File.dirname(__FILE__) + '/../static'
 
 	get '/' do
 		slim :index
@@ -18,18 +20,22 @@ class App < Sinatra::Base
 			shark_inhabitants: 	params[:shark_inhabitants].to_i,
 			tuna_breeding: 			params[:tuna_breeding].to_i,
 			shark_breeding: 		params[:shark_breeding].to_i,
-			starving: 					params[:starving]
+			starving: 					params[:starving].to_i
 		}
-		@c = Core.new options
+		session[:instance] = Core.new options
     content_type :json
-		@c.environment.to_json
+		session[:instance].environment.to_json
 	end
 
 	get '/turn' do
-    @c ||= Core.new
-    @c.environment.turn
+		begin
+	    session[:instance].environment.turn
+	  rescue => error
+	  	puts error.inspect
+	  end
+
     content_type :json
-    @c.environment.to_json
+    session[:instance].environment.to_json
 	end
 
 	get '/param/:id' do

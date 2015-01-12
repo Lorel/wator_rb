@@ -1,69 +1,300 @@
 doctype html
 html
-  head
-    title Wator : Tunas VS Sharks
-    meta name="keywords" content="template language"
-    meta name="author" content="havet/douillyez"
-    link rel="icon" type="image/png" href="favicon.png"
-    link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"
-		script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"
-		css:
-			#content {
-				width: 1200px;
-				margin: auto;
-			}
-			#see {
-				border-collapse: collapse;
-				padding: 50px;
-				border: 1px solid lightblue;
-			}
-			#see td {
-				margin: 1px;
-				width: 8px;
-				height: 8px;
-			}
-			.tuna{ background-color: blue; }
-			.shark{ background-color: red; }
+    head
+        title Wator : Tunas VS Sharks
+        meta name="keywords" content="template language"
+        meta name="author" content="havet/douillyez"
+        link rel="icon" type="image/png" href="favicon.png"
+        link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"
+        script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"
+        script src="http://code.highcharts.com/highcharts.js"
+        script src="http://code.highcharts.com/modules/exporting.js"
+        script src="lib/Chart.js/Chart.js"
+        css:
+            #content {
+                width: 1400px;
+                margin: auto;
+                padding: 50px;
+            }
+            #see {
+                border-collapse: collapse;
+                padding: 50px;
+                border: 1px solid lightblue;
+                float: left;
+            }
+            #see td {
+                width: 10px;
+                height: 10px;
+            }
+            .tuna{ background-color: blue; }
+            .shark{ background-color: red; }
+            #infos {
+                float: left;
+            }
+            #infos ul {
+                list-style: none;
+            }
+            #infos p {
+                font-size: 18px;
+            }
 
-  body
-    h1 Wator : Tunas VS Sharks
+    body
+        h1 Wator : Tunas VS Sharks
 
-    #content
-      p This example shows you how a basic Slim file looks.
+        #content
+            table#see
 
-      table#see
+            #infos
+                ul
+                    li
+                        'Nombre d'itérations :
+                        strong#iterations
+                    li
+                        'Population de thons :
+                        strong#tunas
+                    li
+                        'Population de requins :
+                        strong#sharks
+                    li
+                        p="Populations"
+                        canvas#pop width="600" height="200"
+                    li
+                        p="Rapport des populations"
+                        canvas#pop-rate width="600" height="200"
+                    li
+                        #pop-rate-scatter width="600" height="200"
+                    li
+                        canvas#pop-age width="400" height="200"
 
 
 
 
     javascript:
+        var running,
+            iterations = 0,
+            delay = 100,
+            popRateScatterDatas = [],
+            // Get the contexts of the canvas elements we want to select
+            popCtx = document.getElementById("pop").getContext("2d"),
+            popRateCtx = document.getElementById("pop-rate").getContext("2d"),
+            popAgeCtx = document.getElementById("pop-age").getContext("2d");
+
+        // chart of population
+        var popDatas = {
+            labels: [],
+            datasets: [
+                {
+                    label: "Evolution de la population de thons",
+                    fillColor: "rgba(220,220,220,0.2)",
+                    strokeColor: "rgba(220,220,220,1)",
+                    pointColor: "rgba(220,220,220,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(220,220,220,1)",
+                    data: []
+                },
+                {
+                    label: "Evolution de la population de requins",
+                    fillColor: "rgba(151,187,205,0.2)",
+                    strokeColor: "rgba(151,187,205,1)",
+                    pointColor: "rgba(151,187,205,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(151,187,205,1)",
+                    data: []
+                }
+            ]
+        };
+
+        var popChartOptions = {
+            ///Boolean - Whether grid lines are shown across the chart
+            scaleShowGridLines : true,
+            //String - Colour of the grid lines
+            scaleGridLineColor : "rgba(0,0,0,.05)",
+            //Number - Width of the grid lines
+            scaleGridLineWidth : 1,
+            //Boolean - Whether to show horizontal lines (except X axis)
+            scaleShowHorizontalLines: true,
+            //Boolean - Whether to show vertical lines (except Y axis)
+            scaleShowVerticalLines: false,
+            //Boolean - Whether the line is curved between points
+            // Boolean - If we want to override with a hard coded scale
+            scaleOverride: true,
+            // ** Required if scaleOverride is true **
+            // Number - The number of steps in a hard coded scale
+            scaleSteps: 10,
+            // Number - The value jump in the hard coded scale
+            scaleStepWidth: 250,
+            // Number - The scale starting value
+            scaleStartValue: 0,
+            bezierCurve : false,
+            //Number - Tension of the bezier curve between points
+            bezierCurveTension : 0.4,
+            //Boolean - Whether to show a dot for each point
+            pointDot : true,
+            //Number - Radius of each point dot in pixels
+            pointDotRadius : 2,
+            //Number - Pixel width of point dot stroke
+            pointDotStrokeWidth : 1,
+            //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+            pointHitDetectionRadius : 0,
+            //Boolean - Whether to show a stroke for datasets
+            datasetStroke : false,
+            //Number - Pixel width of dataset stroke
+            datasetStrokeWidth : 2,
+            //Boolean - Whether to fill the dataset with a colour
+            datasetFill : true,
+            //String - A legend template
+            legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+
+        };
+
+        var popChart = new Chart(popCtx).Line(popDatas,popChartOptions);
+
+        function addDatasToPopChart( data ) {
+            window.popChart.addData( [ data.tunas.length, data.sharks.length ], window.iterations );
+        }
+        // chart of population END
+
+        // rate chart of population
+        var popRateDatas = {
+            labels: [],
+            datasets: [
+                {
+                    label: "Evolution du rapport des populations",
+                    fillColor: "rgba(220,220,220,0.2)",
+                    strokeColor: "rgba(220,220,220,1)",
+                    pointColor: "rgba(220,220,220,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "#fff",
+                    pointHighlightStroke: "rgba(220,220,220,1)",
+                    data: []
+                }
+            ]
+        };
+
+        var popRateChart = new Chart(popRateCtx).Line(popRateDatas,$.merge({scaleOverride: true,scaleSteps: 10,scaleStepWidth: 10},popChartOptions)); // use same options as pop chart
+
+        function addDatasToPopRateChart( data ) {
+            window.popRateChart.addData( [ data.tunas.length / data.sharks.length ], window.iterations );
+        }
+        // rate chart of population END
+
+        // chart of rate between populations
+        function renderPopRateScatterChart() {
+            console.log('render chart');
+            $('#pop-rate-scatter').highcharts({
+                    chart: {
+                        type: 'scatter',
+                        zoomType: 'xy'
+                    },
+                    title: {
+                        text: 'Rapport entre la population de thons et celle de requins'
+                    },
+                    xAxis: {
+                        title: {
+                            enabled: true,
+                            text: 'Population de thons'
+                        },
+                        startOnTick: true,
+                        endOnTick: true,
+                        showLastLabel: true
+                    },
+                    yAxis: {
+                        title: {
+                            text: 'Population de requins'
+                        }
+                    },
+                    plotOptions: {
+                        scatter: {
+                            marker: {
+                                radius: 5,
+                                states: {
+                                    hover: {
+                                        enabled: true,
+                                        lineColor: 'rgb(100,100,100)'
+                                    }
+                                }
+                            },
+                            states: {
+                                hover: {
+                                    marker: {
+                                        enabled: false
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                headerFormat: '<b>{series.name}</b><br>',
+                                pointFormat: '{point.x} cm, {point.y} kg'
+                            }
+                        }
+                    },
+                    series: [{
+                        name: 'Male',
+                        color: 'rgba(119, 152, 191, .5)',
+                        data: window.popRateScatterDatas
+                    }]
+                });
+        }
+
+          //  popRateChart = new Chart(popRateCtx).PolarArea(data)
+          //  popAgeChart = new Chart(popAgeCtx).PolarArea(data)
+
     	$(document).ready(function(){
             init();
-            for (var i=0; i<10; i++) {
-                setTimeout(turn, 100);
-            }    		
+            run(); 		
     	});
 
+        $(document).on('keypress', function(event) {
+            if ( event.which == 115 ) {
+                window.running = !window.running;
+                if ( window.running ) {
+                    window.run();
+                }
+            }
+        });
+
         function call( url ) {
-            console.log('CALL');
+
             $.ajax({
                 url: url,
-                context: $( "#see" )
+                context: $( "#content" )
             }).done(function(data) {
-                var $table = $( this );
+                var $this = $( this ),
+                    $table = $this.find( '#see' ),
+                    $iterations = $this.find( '#iterations' ),
+                    $tunas = $this.find( '#tunas' ),
+                    $sharks = $this.find( '#sharks' );
 
                 $( this ).addClass( "done" );
-                console.log(data);
 
+                // datas process
+                $iterations.text( window.iterations );
+                $tunas.text( data.tunas.length );
+                $sharks.text( data.sharks.length );
+                // pop-chart
+                if ( (window.iterations % 10) == 0 ) {
+                    window.addDatasToPopChart(data);
+                }
+                // pop-rate-chart
+                if ( (window.iterations % 10) == 0 ) {
+                    window.addDatasToPopRateChart(data);
+                }
+                // pop-rate-scart-chart
+                window.popRateScatterDatas.push([data.tunas.length,data.sharks.length]);
+                if ( (window.iterations % 50) == 0 ) {
+                    window.renderPopRateScatterChart();
+                }
+                // data process END
+
+                // update grid
                 $table.empty();
-                console.log($table  );
+
                 $.each( data.grid, function( index, line ) {
                     var $tr = $( '<tr>' );
-                    console.log(line.length);
 
                     $.each( line, function( index, square ) {
                         var $td = $( '<td>' );
-                        console.log(square.content );
 
                         if ( square.content != null ) {
                             $td.addClass( square.content.type );
@@ -73,18 +304,26 @@ html
 
                     $table.append( $tr );
                 });
-                console.log($table);
+                // update grid END
+
             }).fail(function( error ) {
                 console.log(error);
             });
         }
 
         function init() {
-            console.log('INIT');
-            call( "init/100/50/50/3/10/4" );
+            // /init/:size/:tuna_inhabitants/:shark_inhabitants/:tuna_breeding/:shark_breeding/:starving
+            call( "init/50/100/100/3/7/4" );
         }
 
         function turn() {
-            console.log('TURN');
-            call( "turn" );
+            if ( window.running ) {
+                window.iterations++;
+                call( "turn" );
+                setTimeout( turn, window.delay );
+            }
+        }
+
+        function run() {
+            turn();
         }

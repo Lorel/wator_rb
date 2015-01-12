@@ -13,7 +13,7 @@ class Core
 		puts "TUNAS : breeding : #{Settings.params[:tuna_breeding]}"
 		@iterations = Settings.params[:iterations]
 		@environment = Environment.new
-		@environment.display
+		# @environment.display
 	end
 	def run
 		@iterations.times {
@@ -23,5 +23,5 @@ class Core
 	end
 end
 
-# m = Core.new
-# m.run
+ #m = Core.new
+ #m.run

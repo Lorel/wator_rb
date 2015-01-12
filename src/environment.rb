@@ -39,7 +39,9 @@ class Environment
 		{
 			grid: 	@grid,
 			tunas: 	@tunas,
-			sharks: @sharks
+			sharks: @sharks,
+			tunas_census: tunas_census,
+			sharks_census: sharks_census
 		}.to_json
 	end
 
@@ -72,6 +74,19 @@ class Environment
 		squares_around(square).select{ |s| s.content.is_a? Tuna }
 	end
 
+	def tunas_census
+		@tunas.census 
+	end
+
+	def sharks_census
+		@sharks.census 
+	end
+
+  Array.class_eval do
+		def census 
+			self.reduce([]){ |census,agent| census[agent.age] = (census[agent.age] || 0) + 1 ; census }
+		end
+	end
 
 	class Square
 		attr_accessor :x,:y,:content

@@ -1,6 +1,6 @@
 
 class Agent
-	attr_accessor :square
+	attr_accessor :square, :age
 
 	def initialize(environment, square = nil)
 		@breeding_time = Settings.params[:breeding]
@@ -70,7 +70,7 @@ class Shark < Agent
 	def turn
 		eat
 		super
-		die if @starving == @starving_time
+		die unless @starving < @starving_time
 	end
 end
 
