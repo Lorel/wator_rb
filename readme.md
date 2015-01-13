@@ -22,3 +22,7 @@ Once app running, go to ```localhost:4567``` in your favorite browser
 - breeding time of tunas : 3
 - breeding time of sharks : 7
 - starvation time of sharks : 4
+
+### LAUNCH SIMULATION
+
+You can start/stop the simulation using 'S' key
