@@ -25,4 +25,4 @@ Once app running, go to ```localhost:4567``` in your favorite browser
 
 ### LAUNCH SIMULATION
 
-You can start/stop the simulation using 'S' key
+Start/stop the simulation by using 'S' key
