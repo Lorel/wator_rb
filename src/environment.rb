@@ -78,7 +78,7 @@ class Environment
 	end
 
 	def tunas_census
-		@tunas.census 
+		@tunas.census.map{ |a| -(a || 0) } 
 	end
 
 	def sharks_census
