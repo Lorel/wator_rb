@@ -1,9 +1,9 @@
 params:
-  iterations: 200
+  iterations: 3
   dimensions: 50
-  inhabitants: 50
-  tuna_inhabitants: 100
-  shark_inhabitants: 50
+  population: 50
+  tuna_population: 100
+  shark_population: 50
   breeding: 3
   tuna_breeding: 3
   shark_breeding: 10

@@ -44,7 +44,6 @@ html
             }
 
     body
-
         #content
             h1 Wator : Tunas VS Sharks
 
@@ -79,9 +78,9 @@ html
                         p="Rapport des populations"
                         canvas#pop-rate width="600" height="200"
                     li
-                        #pop-rate-scatter width="600" height="200"
+                        #pop-rate-scatter width="600" height="400"
                     li
-                        canvas#pop-age width="400" height="200"
+                        #pop-age width="600" height="400"
 
 
 
@@ -91,10 +90,10 @@ html
             iterations = 0,
             delay = 100,
             popRateScatterDatas = [],
+            popAgeRepartitionDatas = [],
             // Get the contexts of the canvas elements we want to select
             popCtx = document.getElementById("pop").getContext("2d"),
-            popRateCtx = document.getElementById("pop-rate").getContext("2d"),
-            popAgeCtx = document.getElementById("pop-age").getContext("2d");
+            popRateCtx = document.getElementById("pop-rate").getContext("2d");
 
         // chart of population
         var popDatas = {
@@ -199,7 +198,6 @@ html
 
         // chart of rate between populations
         function renderPopRateScatterChart() {
-            console.log('render chart');
             $('#pop-rate-scatter').highcharts({
                     chart: {
                         type: 'scatter',
@@ -252,7 +250,71 @@ html
                         data: window.popRateScatterDatas
                     }]
                 });
-        }
+        }// chart of rate between populations END
+
+        // chart of populations age repartition
+        function renderPopAgesChart(data) {
+            var categories = new Array( Math.max( data.tunas_census.length, data.sharks_census.length ) );
+
+            $('#pop-age').highcharts({
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: 'Répartation des populations par age'
+            },
+            xAxis: [{
+                categories: categories,
+                reversed: false,
+                labels: {
+                    step: 1
+                }
+            }, { // mirror axis on right side
+                opposite: true,
+                reversed: false,
+                categories: categories,
+                linkedTo: 0,
+                labels: {
+                    step: 1
+                }
+            }],
+            yAxis: {
+                title: {
+                    text: "Nombre d'agents"
+                },
+                labels: {
+                    step: 10,
+                    formatter: function () {
+                        return Math.abs(this.value);
+                    }
+                },
+                min: -100,
+                max: 100
+            },
+
+            plotOptions: {
+                series: {
+                    stacking: 'normal'
+                }
+            },
+
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.series.name + ', age ' + this.point.category + '</b><br/>' +
+                        'Population: ' + Highcharts.numberFormat(Math.abs(this.point.y), 0);
+                }
+            },
+
+            series: [{
+                name: 'Thons',
+                data: data.tunas_census.map(function(num){ return (num ? -num : 0); })
+            }, {
+                name: 'Requins',
+                data: data.sharks_census
+            }]
+        });
+
+        }// chart of populations age repartition END
 
           //  popRateChart = new Chart(popRateCtx).PolarArea(data)
           //  popAgeChart = new Chart(popAgeCtx).PolarArea(data)
@@ -321,6 +383,11 @@ html
                 if ( (window.iterations % 50) == 0 ) {
                     window.renderPopRateScatterChart();
                 }
+                // pop-agee-chary
+                if ( (window.iterations % 10) == 0 ) {
+                    window.renderPopAgesChart( data );
+                }
+                
                 // data process END
 
                 // update grid
@@ -332,8 +399,8 @@ html
                     $.each( line, function( index, square ) {
                         var $td = $( '<td>' );
 
-                        if ( square.content != null ) {
-                            $td.addClass( square.content.type );
+                        if ( square != null ) {
+                            $td.addClass( square );
                         }
                         $tr.append( $td );
                     });
