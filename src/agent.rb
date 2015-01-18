@@ -1,17 +1,12 @@
 class Agent < Marsys::Agent
-	attr_accessor :square, :age
 
-	def initialize(environment, square = nil)
-		super
-	end
+	# def initialize(environment, square = nil)
+	# 	super
+	# end
 
-	def to_json(options = {})
-		super
-	end
-
-	def move
-		super
-	end
+	# def to_json(options = {})
+	# 	super
+	# end
 
 	def give_birth
 		@breeding += 1
@@ -23,16 +18,7 @@ class Agent < Marsys::Agent
 	end
 
 	def turn
-		move
+		super
 		give_birth
-		@age += 1
-	end
-
-	def die
-		super
-	end
-
-	def collection
-		super
 	end
 end

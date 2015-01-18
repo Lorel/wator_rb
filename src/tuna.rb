@@ -1,4 +1,4 @@
-class Tuna < Marsys::Agent
+class Tuna < Agent
   attr_accessor :alive
 
   def initialize(environment, square = nil)

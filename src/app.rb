@@ -3,9 +3,10 @@ require 'sinatra/base'
 require 'json'
 require 'slim'
 
-load "core.rb"
+load "agent.rb"
 load "tuna.rb"
 load "shark.rb"
+load "core.rb"
 
 class App < Sinatra::Base
 	use Rack::Session::Pool

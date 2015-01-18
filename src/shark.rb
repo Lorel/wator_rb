@@ -1,4 +1,4 @@
-class Shark < Marsys::Agent
+class Shark < Agent
 
   def initialize(environment, square = nil)
     super(environment, square)
