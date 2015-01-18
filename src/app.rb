@@ -1,9 +1,11 @@
-
+require 'marsys'
 require 'sinatra/base'
 require 'json'
 require 'slim'
 
 load "core.rb"
+load "tuna.rb"
+load "shark.rb"
 
 class App < Sinatra::Base
 	use Rack::Session::Pool

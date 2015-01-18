@@ -293,7 +293,7 @@ html
 
             series: [{
                 name: 'Thons',
-                data: data.tunas_census
+                data: data.tunas_census.map(function(num){ return (num ? -num : 0); })
             }, {
                 name: 'Requins',
                 data: data.sharks_census
@@ -367,8 +367,8 @@ html
                     $.each( line, function( index, square ) {
                         var $td = $( '<td>' );
 
-                        if ( square.content != null ) {
-                            $td.addClass( square.content.type );
+                        if ( square != null ) {
+                            $td.addClass( square );
                         }
                         $tr.append( $td );
                     });
