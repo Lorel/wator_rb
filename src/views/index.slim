@@ -320,21 +320,23 @@ html
           //  popAgeChart = new Chart(popAgeCtx).PolarArea(data)
 
         var sizeWator,
-            thunas,
+            tunas,
             sharks,
-            thuna_breeding,
+            tuna_breeding,
             shark_breeding,
             starving;
 
         $( "#init" ).on( 'click', 'button[name="run"]', function(e){
             e.preventDefault(); e.stopPropagation();
 
-            if ( $('input[name="size"]').val() ) { window.sizeWator = $('input[name="size"]').val() } else { window.sizeWator = 50 }
-            if ( $('input[name="thunas"]').val() ) { window.thunas = $('input[name="thunas"]').val() } else { window.thunas = 100 }
-            if ( $('input[name="sharks"]').val() ) { window.sharks = $('input[name="sharks"]').val() } else { window.sharks = 100 }
-            if ( $('input[name="thuna_breeding"]').val() ) { window.thuna_breeding = $('input[name="thuna_breeding"]').val() } else { window.thuna_breeding = 3 }
-            if ( $('input[name="shark_breeding"]').val() ) { window.shark_breeding = $('input[name="shark_breeding"]').val() } else { window.shark_breeding = 7 }
-            if ( $('input[name="starving"]').val() ) { window.starving = $('input[name="starving"]').val() } else { window.starving = 5 }
+            window.running = false;
+
+            if ( $('input[name="size"]').val() ) { window.sizeWator = $('input[name="size"]').val(); } else { window.sizeWator = 50; $('input[name="size"]').val(window.sizeWator); }
+            if ( $('input[name="tuna_inhabitants"]').val() ) { window.tunas = $('input[name="tuna_inhabitants"]').val(); } else { window.tunas = 100; $('input[name="tuna_inhabitants"]').val(window.tunas); }
+            if ( $('input[name="shark_inhabitants"]').val() ) { window.sharks = $('input[name="shark_inhabitants"]').val(); } else { window.sharks = 100; $('input[name="shark_inhabitants"]').val(window.sharks); }
+            if ( $('input[name="tuna_breeding"]').val() ) { window.tuna_breeding = $('input[name="tuna_breeding"]').val(); } else { window.tuna_breeding = 3; $('input[name="tuna_breeding"]').val(window.tuna_breeding); }
+            if ( $('input[name="shark_breeding"]').val() ) { window.shark_breeding = $('input[name="shark_breeding"]').val(); } else { window.shark_breeding = 10; $('input[name="shark_breeding"]').val(window.shark_breeding); }
+            if ( $('input[name="starving"]').val() ) { window.starving = $('input[name="starving"]').val(); } else { window.starving = 5; $('input[name="starving"]').val(window.starving); }
 
             window.init();
             window.running = confirm("L'expérience a été initialisée, appuyez sur OK pour démarrer\n(à tout moment, vous pouvez arrêter et redémarrer l'expérience en appuyant sur la touche 'S')");
@@ -411,22 +413,28 @@ html
 
             }).fail(function( error ) {
                 console.log(error);
+            }).always(function() {
+                setTimeout( turn, window.delay );
             });
         }
 
         function init() {
-            $('#pop').empty();
-            $('#pop-rate').empty();
+            window.popCtx.clearRect(0,0,600,200);
+            if (window.popChart) window.popChart.destroy();
+            window.popDatas.labels = [];
             window.popChart = new Chart(window.popCtx).Line(window.popDatas,$.merge({scaleStepWidth: (window.sizeWator * window.sizeWator / 10)},window.popChartOptions));
+            window.popRateCtx.clearRect(0,0,600,200);
+            if (window.popRateChart) window.popRateChart.destroy();
+            window.popRateDatas.labels = [];
             window.popRateChart = new Chart(window.popRateCtx).Line(window.popRateDatas,$.merge({scaleOverride: true,scaleSteps: 10,scaleStepWidth: 10},window.popChartOptions)); // use same options as pop chart
+            window.popRateScatterDatas = [];
             // /init/:size/:tuna_inhabitants/:shark_inhabitants/:tuna_breeding/:shark_breeding/:starving
-            call( "init/" + window.sizeWator + "/" + window.thunas + "/" + window.sharks + "/" + window.thuna_breeding + "/" + window.shark_breeding + "/" + window.starving );
+            call( "init/" + window.sizeWator + "/" + window.tunas + "/" + window.sharks + "/" + window.tuna_breeding + "/" + window.shark_breeding + "/" + window.starving );
         }
 
         function turn() {
             if ( window.running ) {
                 call( "turn" );
-                setTimeout( turn, window.delay );
             }
         }
 
