@@ -29,3 +29,7 @@ You can enter your parameters in the dedicated form and click ```Run !```
 
 Stop/Restart the simulation by using 'S' key
 
+### SCREENSHOTS
+
+![Wator runtime](http://snag.gy/4ahkU.jpg)
+
