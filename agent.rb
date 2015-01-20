@@ -10,11 +10,8 @@ class Agent < Marsys::Agent
     @age = 0
   end
 
-  def to_json(options = {})
-    {
-      type: self.class.to_s.downcase,
-      age:  @age
-    }.to_json
+  def add_hash_to_json
+    { age:  @age }
   end
 
   def move

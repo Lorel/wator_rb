@@ -5,19 +5,14 @@ class Environment < Marsys::Environment
     census_methods_initialize
   end
 
-  def to_json(options = {})
-    json = {
-      grid:   @grid.map{|line| line.map{ |square|
-        square.content ? square.content.class.to_s.downcase : nil
-      }},
-      iteration: @iteration
-    }
+  def add_hash_to_json
+    puts "CALLED add_hash_to_json"
+    hash = {}
     @agents_type.each do |type|
-      json[type.pluralize] = self.send(type.pluralize)                      # add collection of agents of this type
-      json["#{type}s_census".to_sym] = self.send("#{type}s_census".to_sym)  # add census informations for agents of this type
+      hash[type.pluralize] = self.send(type.pluralize)                      # add collection of agents of this type
+      hash["#{type}s_census".to_sym] = self.send("#{type}s_census".to_sym)  # add census informations for agents of this type
     end
-    
-    json.to_json
+    hash
   end
 
   def display_stats
