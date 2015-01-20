@@ -1,9 +1,9 @@
 class Environment < Marsys::Environment
 
-	def initialize(agents=[], options={})
-		super(agents, options)
-		census_initialize
-	end
+  def initialize(agents=[], options={})
+    super(agents, options)
+    census_methods_initialize
+  end
 
   def to_json(options = {})
     json = {
@@ -20,25 +20,23 @@ class Environment < Marsys::Environment
     json.to_json
   end
 
-	def display_stats
-		super
-		@agents_type.each do |type|
+  def display_stats
+    super
+    @agents_type.each do |type|
       puts "#{type.to_s.pluralize.capitalize} population  : #{self.send(type.pluralize).count}"
     end
-	end
+  end
 
-	# private
-	  def census_initialize
-	    @agents_type.each do |type|
-	      # Create method #{type.pluralize}_census which return an Array
-	      # with population of type for each age range
-	      self.class.send( :define_method, "#{type.pluralize}_census", Proc.new{
-	        self.send(type.pluralize).census
-	      })
-	    end
-	  end
-
-  # initialize_methods(:census_initialize)
+  private
+    def census_methods_initialize
+      @agents_type.each do |type|
+        # Create method #{type.pluralize}_census which return an Array
+        # with population of type for each age range
+        self.class.send( :define_method, "#{type.pluralize}_census", Proc.new{
+          self.send(type.pluralize).census
+        })
+      end
+    end
 
   Array.class_eval do
     def census 
