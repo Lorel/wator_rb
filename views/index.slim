@@ -49,12 +49,12 @@ html
 
             form#init.form-inline
                 .form-group
-                    input.form-control name="size" placeholder="Taille"
-                    input.form-control name="tuna_inhabitants" placeholder="Thons"
-                    input.form-control name="shark_inhabitants" placeholder="Requins"
-                    input.form-control name="tuna_breeding" placeholder="Gestation thons"
-                    input.form-control name="shark_breeding" placeholder="Gestation requins"
-                    input.form-control name="starving" placeholder="Famine requins"
+                    input.form-control name="size" placeholder="Size"
+                    input.form-control name="tuna_inhabitants" placeholder="Tunas population"
+                    input.form-control name="shark_inhabitants" placeholder="Sharks population"
+                    input.form-control name="tuna_breeding" placeholder="Tuna's breeding"
+                    input.form-control name="shark_breeding" placeholder="Shark's breeding"
+                    input.form-control name="starving" placeholder="Shark's starving"
                     button.btn name="run"
                         'Run !
 
@@ -63,19 +63,19 @@ html
             #infos
                 ul
                     li
-                        'Nombre d'itérations :
+                        'Iterations :
                         strong#iterations
                     li
-                        'Population de thons :
+                        'Tunas population :
                         strong#tunas
                     li
-                        'Population de requins :
+                        'Sharks population :
                         strong#sharks
                     li
-                        p="Populations"
+                        h3="Populations"
                         canvas#pop width="600" height="200"
                     li
-                        p="Rapport des populations"
+                        h3="Populations relation"
                         canvas#pop-rate width="600" height="200"
                     li
                         #pop-rate-scatter width="600" height="400"
@@ -88,7 +88,7 @@ html
     javascript:
         var running,
             iterations = 0,
-            delay = 100,
+            delay = 0,
             popRateScatterDatas = [],
             popAgeRepartitionDatas = [],
             // Get the contexts of the canvas elements we want to select
@@ -100,7 +100,7 @@ html
             labels: [],
             datasets: [
                 {
-                    label: "Evolution de la population de thons",
+                    label: "Tunas population evolution",
                     fillColor: "rgba(220,220,220,0.2)",
                     strokeColor: "rgba(220,220,220,1)",
                     pointColor: "rgba(220,220,220,1)",
@@ -110,7 +110,7 @@ html
                     data: []
                 },
                 {
-                    label: "Evolution de la population de requins",
+                    label: "Sharks population evolution",
                     fillColor: "rgba(151,187,205,0.2)",
                     strokeColor: "rgba(151,187,205,1)",
                     pointColor: "rgba(151,187,205,1)",
@@ -177,7 +177,7 @@ html
             labels: [],
             datasets: [
                 {
-                    label: "Evolution du rapport des populations",
+                    label: "Populations relation evolution",
                     fillColor: "rgba(220,220,220,0.2)",
                     strokeColor: "rgba(220,220,220,1)",
                     pointColor: "rgba(220,220,220,1)",
@@ -204,12 +204,12 @@ html
                         zoomType: 'xy'
                     },
                     title: {
-                        text: 'Rapport entre la population de thons et celle de requins'
+                        text: 'Relation between tunas and sharks populations'
                     },
                     xAxis: {
                         title: {
                             enabled: true,
-                            text: 'Population de thons'
+                            text: 'Tunas population'
                         },
                         startOnTick: true,
                         endOnTick: true,
@@ -217,7 +217,7 @@ html
                     },
                     yAxis: {
                         title: {
-                            text: 'Population de requins'
+                            text: 'Sharks population'
                         }
                     },
                     plotOptions: {
@@ -245,7 +245,7 @@ html
                         }
                     },
                     series: [{
-                        name: 'Male',
+                        name: 'Relation tunas/sharks',
                         color: 'rgba(119, 152, 191, .5)',
                         data: window.popRateScatterDatas
                     }]
@@ -261,7 +261,7 @@ html
                 type: 'bar'
             },
             title: {
-                text: 'Répartation des populations par age'
+                text: 'Age distribution of populations'
             },
             xAxis: [{
                 categories: categories,
@@ -280,7 +280,7 @@ html
             }],
             yAxis: {
                 title: {
-                    text: "Nombre d'agents"
+                    text: "Agents number"
                 },
                 labels: {
                     step: 10,
@@ -306,10 +306,10 @@ html
             },
 
             series: [{
-                name: 'Thons',
+                name: 'Tunas',
                 data: data.tunas_census.map(function(num){ return (num ? -num : 0); })
             }, {
-                name: 'Requins',
+                name: 'Sharks',
                 data: data.sharks_census
             }]
         });
@@ -345,7 +345,7 @@ html
 
         $(document).on('keypress', function(event) {
             if ( event.which == 115 ) {
-                window.running ? alert('Arrêt') : alert('Redémarrage');
+                window.running ? alert('Stopped') : alert('Restarting');
                 window.running = !window.running;
                 if ( window.running ) {
                     window.run();
