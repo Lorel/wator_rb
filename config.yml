@@ -1,5 +1,5 @@
 params:
-  iterations: 30
+  iterations: 100
   dimensions: 50
   population: 50
   tuna_population: 100
