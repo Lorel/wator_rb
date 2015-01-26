@@ -41,9 +41,5 @@ class App < Sinatra::Base
     session[:instance].environment.to_json
 	end
 
-	get '/param/:id' do
-		user_id = params[:id]
-	end
-
 	run! if app_file == $0 # run Sinatra
 end
